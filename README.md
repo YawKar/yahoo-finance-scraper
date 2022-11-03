@@ -1,5 +1,7 @@
 # Yahoo!Finance cryptocurrencies scraper
 
+Scrapes cryptocurrencies from https://finance.yahoo.com/crypto?count=100&offset=0, where iterates through offset from 0 to the current number of hundreds of cryptocurrencies
+
 ## Algorithm explanation
 
 We use 2 execution services - one for pulling HTMLs from URLs and the other one for parsing actual data.
