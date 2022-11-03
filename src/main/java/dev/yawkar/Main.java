@@ -28,13 +28,13 @@ public class Main {
                     .supplyAsync(() -> JSoupCrawler.of(targetUrl).call(), crawlExecutor)
                     .thenAcceptAsync(doc -> ParseTask.of(doc, new ParseCryptocurrenciesStrategy(), cryptocurrencies::add).run(), parseExecutor);
             // we're running without any proxy, therefore, we can be banned for too many requests in a short period of time
-            Thread.sleep(5000);
+            Thread.sleep(2000);
         }
 
         int remainingCryptocurrencies = numberOfCryptocurrenciesToParse % 100;
         if (remainingCryptocurrencies > 0) {
             String targetUrl = "https://finance.yahoo.com/crypto?count=%d&offset=%d"
-                    .formatted(remainingCryptocurrencies, numberOfCryptocurrenciesToParse / 100);
+                    .formatted(remainingCryptocurrencies, numberOfCryptocurrenciesToParse / 100 * 100);
             CompletableFuture
                     .supplyAsync(() -> JSoupCrawler.of(targetUrl).call(), crawlExecutor)
                     .thenAcceptAsync(doc -> ParseTask.of(doc, new ParseCryptocurrenciesStrategy(), cryptocurrencies::add).run(), parseExecutor);
