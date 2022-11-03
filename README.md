@@ -11,6 +11,6 @@ https://github.com/YawKar/yahoo-finance-scraper/blob/b9c60ecc7485e45d40117bc8f63
 After we got it we pull 100 cryptocurrencies per page every 5 seconds (with proxy we can make it in a moment) and create CompletableFuture that parses the pulled Document, populates Cryptocurrency instances and adds them into ConcurrentLinkedQueue.
 https://github.com/YawKar/yahoo-finance-scraper/blob/b9c60ecc7485e45d40117bc8f634fb1f56df4513/src/main/java/dev/yawkar/Main.java#L23-L41
 
-After all tasks complete we write results down into csv file that has name in the following format:
-"results-YYYY-MM-DDThh:mm:ss.SSSSSSSSS"
+After all tasks complete we write results down into the csv file named in the following format:
+"results-YYYY-MM-DDThh:mm:ss.SSSSSSSSS.csv"
 https://github.com/YawKar/yahoo-finance-scraper/blob/b9c60ecc7485e45d40117bc8f634fb1f56df4513/src/main/java/dev/yawkar/Main.java#L43-L60
