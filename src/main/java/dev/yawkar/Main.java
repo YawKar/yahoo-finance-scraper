@@ -9,6 +9,7 @@ import dev.yawkar.util.YahooFinanceHelper;
 
 import java.io.*;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Queue;
 import java.util.concurrent.*;
 import java.util.stream.IntStream;
@@ -37,7 +38,7 @@ public class Main {
         parseExecutor.shutdown();
         while (!parseExecutor.awaitTermination(5, TimeUnit.SECONDS));
 
-        try (CSVWriter writer = new CSVWriter(new FileWriter("results-" + LocalDateTime.now() + ".csv"))) {
+        try (CSVWriter writer = new CSVWriter(new FileWriter("results-" + LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) + ".csv"))) {
             writer.writeNext(new String[]{"Symbol", "Name", "Price", "Change", "Market Cap", "Circulating Supply"});
             for (var cryptocurrency : cryptocurrencies) {
                 System.out.println(cryptocurrency);
