@@ -11,6 +11,7 @@ import java.io.*;
 import java.time.LocalDateTime;
 import java.util.Queue;
 import java.util.concurrent.*;
+import java.util.stream.IntStream;
 
 public class Main {
 
@@ -21,7 +22,7 @@ public class Main {
         Queue<Cryptocurrency> cryptocurrencies = new ConcurrentLinkedQueue<>();
 
         int numberOfCryptocurrenciesToParse = YahooFinanceHelper.getNumberOfCryptocurrencies();
-        for (int hundredIndex = 0; hundredIndex < numberOfCryptocurrenciesToParse / 100; ++hundredIndex) {
+        for (int hundredIndex = 0; hundredIndex < Math.ceil((double) numberOfCryptocurrenciesToParse / 100); ++hundredIndex) {
             String targetUrl = "https://finance.yahoo.com/crypto?count=%d&offset=%d".formatted(100, hundredIndex * 100);
             // if you have proxies, you can rewrite it as JSoupCrawler.of(targetUrl, yourProxy).call() here and then remove Thread.sleep(5000) in the bottom
             CompletableFuture
@@ -29,15 +30,6 @@ public class Main {
                     .thenAcceptAsync(doc -> ParseTask.of(doc, new ParseCryptocurrenciesStrategy(), cryptocurrencies::add).run(), parseExecutor);
             // we're running without any proxy, therefore, we can be banned for too many requests in a short period of time
             Thread.sleep(2000);
-        }
-
-        int remainingCryptocurrencies = numberOfCryptocurrenciesToParse % 100;
-        if (remainingCryptocurrencies > 0) {
-            String targetUrl = "https://finance.yahoo.com/crypto?count=%d&offset=%d"
-                    .formatted(remainingCryptocurrencies, numberOfCryptocurrenciesToParse / 100 * 100);
-            CompletableFuture
-                    .supplyAsync(() -> JSoupCrawler.of(targetUrl).call(), crawlExecutor)
-                    .thenAcceptAsync(doc -> ParseTask.of(doc, new ParseCryptocurrenciesStrategy(), cryptocurrencies::add).run(), parseExecutor);
         }
 
         crawlExecutor.shutdown();
@@ -48,6 +40,7 @@ public class Main {
         try (CSVWriter writer = new CSVWriter(new FileWriter("results-" + LocalDateTime.now() + ".csv"))) {
             writer.writeNext(new String[]{"Symbol", "Name", "Price", "Change", "Market Cap", "Circulating Supply"});
             for (var cryptocurrency : cryptocurrencies) {
+                System.out.println(cryptocurrency);
                 writer.writeNext(new String[]{
                         cryptocurrency.symbol(),
                         cryptocurrency.name(),
